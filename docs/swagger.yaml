@@ -1,0 +1,368 @@
+basePath: /
+definitions:
+  model.BookingRes:
+    properties:
+      lotID:
+        type: integer
+      parkedAt:
+        type: string
+      slotID:
+        type: integer
+    type: object
+  model.LoginReq:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  model.LoginRes:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+    type: object
+  model.MaintenanceStatusReq:
+    properties:
+      maintenanceMode:
+        type: boolean
+      slotID:
+        type: integer
+    type: object
+  model.ParkingLotCreateReq:
+    properties:
+      name:
+        type: string
+      numberOfSlots:
+        type: integer
+    type: object
+  model.ParkingLotRes:
+    properties:
+      Slots:
+        items:
+          $ref: '#/definitions/model.ParkingSlotRes'
+        type: array
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  model.ParkingSlotRes:
+    properties:
+      BookedAt:
+        type: string
+      booked:
+        type: boolean
+      id:
+        type: integer
+      underMaintenance:
+        type: boolean
+    type: object
+  model.UserCreateReq:
+    properties:
+      isParkingManager:
+        type: boolean
+      name:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  model.UserCreateRes:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      username:
+        type: string
+    type: object
+  utils.GenericErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: rezoan(.)tamal@gmail.com
+    name: Rezoan Tamal
+  description: This is a parking app
+  title: Parking App
+  version: v1.0
+paths:
+  /api/v1/login:
+    post:
+      consumes:
+      - application/json
+      description: Login as user
+      parameters:
+      - description: All fields are mandatory
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.LoginRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+      summary: Login as user
+      tags:
+      - Public
+  /api/v1/manager/parking-lots:
+    post:
+      consumes:
+      - application/json
+      description: Takes a name and if the name is unique, it creates a Parking Lot
+        with that name
+      parameters:
+      - description: All fields are mandatory
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/model.ParkingLotCreateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ParkingLotRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+      summary: Create a parking lot
+      tags:
+      - Manager
+  /api/v1/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user
+      parameters:
+      - description: All fields are mandatory
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserCreateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.UserCreateRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+      summary: Register a new user
+      tags:
+      - Public
+  /api/v1/user/park:
+    post:
+      consumes:
+      - application/json
+      description: Book a parking slot by lot ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.BookingRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+      summary: Book a parking slot in a parking lot
+      tags:
+      - User
+  /api/v1/user/parking-lots:
+    get:
+      consumes:
+      - application/json
+      description: Find parking lots
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ParkingLotRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+      summary: Find parking lots
+      tags:
+      - User
+  /api/v1/user/unpark:
+    post:
+      consumes:
+      - application/json
+      description: Book a parking slot by lot ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.BookingRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+      summary: Book a parking slot in a parking lot
+      tags:
+      - User
+  /parking-lots:
+    get:
+      consumes:
+      - application/json
+      description: Find parking lots
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ParkingLotRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+      summary: Find parking lots
+      tags:
+      - Manager
+  /parking-lots/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Find parking a parking lot  by ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ParkingLotRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+      summary: Find parking a parking lot
+      tags:
+      - Manager
+  /parking-slot-status:
+    post:
+      consumes:
+      - application/json
+      description: Switch maintenance mode of a parking slot
+      parameters:
+      - description: All fields are mandatory
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/model.MaintenanceStatusReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ParkingLotRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.GenericErrorResponse'
+      summary: Switch maintenance mode of a parking slot
+      tags:
+      - Manager
+swagger: "2.0"
